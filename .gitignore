@@ -48,3 +48,5 @@ yarn.lock
 # Logs
 logs/
 *.log
+
+spectre.db
