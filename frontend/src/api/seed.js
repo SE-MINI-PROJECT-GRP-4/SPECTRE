@@ -1,0 +1,76 @@
+// Seed data for the in-browser mock backend (shapes follow SRS Appendix B).
+export const DOMAINS = ['Consumer', 'Tenancy & Property', 'Employment', 'Cyber', 'Criminal', 'Family', 'RTI'];
+
+export const seedReferences = [
+  { id: 'ref-1', title: 'Consumer Protection Act, 2019', source: 'India Code', domain: 'Consumer', date: '2019-08-09', link: 'https://www.indiacode.nic.in', status: 'active' },
+  { id: 'ref-2', title: 'Transfer of Property Act, 1882', source: 'India Code', domain: 'Tenancy & Property', date: '1882-02-17', link: 'https://www.indiacode.nic.in', status: 'active' },
+  { id: 'ref-3', title: 'Model Tenancy Act, 2021', source: 'Ministry of Housing and Urban Affairs', domain: 'Tenancy & Property', date: '2021-06-02', link: 'https://mohua.gov.in', status: 'active' },
+  { id: 'ref-4', title: 'Industrial Disputes Act, 1947', source: 'India Code', domain: 'Employment', date: '1947-04-11', link: 'https://www.indiacode.nic.in', status: 'outdated' },
+  { id: 'ref-5', title: 'Information Technology Act, 2000', source: 'India Code', domain: 'Cyber', date: '2000-06-09', link: 'https://www.indiacode.nic.in', status: 'active' },
+  { id: 'ref-6', title: 'Bharatiya Nagarik Suraksha Sanhita, 2023', source: 'India Code', domain: 'Criminal', date: '2023-12-25', link: 'https://www.indiacode.nic.in', status: 'active' },
+  { id: 'ref-7', title: 'Hindu Marriage Act, 1955', source: 'India Code', domain: 'Family', date: '1955-05-18', link: 'https://www.indiacode.nic.in', status: 'active' },
+  { id: 'ref-8', title: 'Right to Information Act, 2005', source: 'India Code', domain: 'RTI', date: '2005-06-15', link: 'https://rti.gov.in', status: 'active' },
+];
+
+export const seedKnowledge = [
+  { id: 'kb-1', domain: 'Consumer', title: 'Defective product or deficient service', refIds: ['ref-1'],
+    keywords: ['refund', 'defective', 'consumer', 'warranty', 'product', 'seller', 'service', 'e-commerce'],
+    explanation: 'If a product is defective or a service is deficient, you can seek a repair, replacement, refund or compensation from the seller or service provider, and approach a Consumer Disputes Redressal Commission if they do not resolve it.',
+    prerequisites: ['Invoice / proof of purchase', 'Photos or evidence of the defect', 'Written communication with the seller'],
+    steps: ['Complain to the seller or service provider in writing and keep a copy.', 'Send a legal notice if there is no response within a reasonable time.', 'File a complaint with the appropriate District Consumer Disputes Redressal Commission (online filing is available through e-Daakhil).', 'Attend hearings or mediation as scheduled.'],
+    templateHint: 'Legal notice for consumer complaint' },
+  { id: 'kb-2', domain: 'Tenancy & Property', title: 'Security deposit and eviction disputes', refIds: ['ref-2', 'ref-3'],
+    keywords: ['rent', 'landlord', 'tenant', 'deposit', 'evict', 'lease', 'tenancy', 'property'],
+    explanation: 'Rights and duties between landlord and tenant depend mainly on your rent agreement and the rent-control or tenancy law of your state. Deposits are normally refundable after lawful deductions once possession is handed back.',
+    prerequisites: ['Signed rent / leave-and-license agreement', 'Rent payment records', 'Notice or messages exchanged with the landlord'],
+    steps: ['Read the notice period and deposit clauses in your agreement.', 'Send a written demand or notice to the landlord stating your claim.', 'Try mediation or a rent authority / civil court in your state if the dispute continues.'],
+    templateHint: 'Rental agreement' },
+  { id: 'kb-3', domain: 'Employment', title: 'Unpaid wages and wrongful termination', refIds: ['ref-4'],
+    keywords: ['salary', 'wages', 'employer', 'terminated', 'fired', 'job', 'employee', 'notice period', 'unpaid'],
+    explanation: 'Employees can raise unpaid wages or an unfair termination first with the employer, and then with the labour authorities of their state. The applicable law depends on your role, sector and state.',
+    prerequisites: ['Appointment letter / contract', 'Salary slips and bank statements', 'Termination letter or emails, if any'],
+    steps: ['Send a written representation to HR or the employer asking for dues.', 'If unresolved, approach the Labour Commissioner or labour office with your documents.', 'Seek advice from a labour lawyer for conciliation or tribunal options.'],
+    templateHint: 'Unpaid wages demand letter' },
+  { id: 'kb-4', domain: 'Cyber', title: 'Online fraud and cyber harassment', refIds: ['ref-5'],
+    keywords: ['cyber', 'online', 'fraud', 'scam', 'hacked', 'upi', 'phishing', 'harassment', 'instagram', 'otp'],
+    explanation: 'Online financial fraud and cyber harassment can be reported quickly through the national cybercrime channels. Speed matters, especially for money transfers.',
+    prerequisites: ['Screenshots, transaction IDs and URLs', 'Bank / platform communication', 'Your ID and contact details'],
+    steps: ['Inform your bank immediately so the transaction can be flagged.', 'Report on the national cybercrime portal (cybercrime.gov.in) or call 1930 for financial fraud.', 'File a complaint at the local police / cyber cell with your evidence.'],
+    templateHint: 'Cyber crime complaint' },
+  { id: 'kb-5', domain: 'Criminal', title: 'Filing an FIR', refIds: ['ref-6'],
+    keywords: ['fir', 'police', 'theft', 'crime', 'complaint', 'assault', 'arrest', 'criminal'],
+    explanation: 'A cognizable offence can be reported by lodging an FIR at a police station. If the police refuse, there are escalation routes available.',
+    prerequisites: ['Details of the incident (date, place, persons involved)', 'Any evidence or witness details', 'Your identification'],
+    steps: ['Go to the police station with jurisdiction (or lodge a Zero FIR at any station).', 'Give a clear written or oral statement and ask for a free copy of the FIR.', 'If refused, escalate in writing to the senior police officer or approach the Magistrate.'],
+    templateHint: null },
+  { id: 'kb-6', domain: 'Family', title: 'Marriage, divorce and maintenance', refIds: ['ref-7'],
+    keywords: ['divorce', 'marriage', 'maintenance', 'custody', 'spouse', 'alimony', 'family'],
+    explanation: 'Family matters depend heavily on personal law, the facts of your case and the court. This is an area where individual legal advice is strongly recommended.',
+    prerequisites: ['Marriage certificate', 'Identity and address proof', 'Details of children, income and assets'],
+    steps: ['Consult a family lawyer about the correct ground and forum.', 'Consider mediation or counselling where suitable.', 'File the petition in the competent Family Court.'],
+    templateHint: null },
+  { id: 'kb-7', domain: 'RTI', title: 'Filing an RTI application', refIds: ['ref-8'],
+    keywords: ['rti', 'right to information', 'government information', 'public authority'],
+    explanation: 'Any citizen can request information held by a public authority by writing to its Public Information Officer.',
+    prerequisites: ['Name of the public authority', 'Specific information requested', 'Application fee (as applicable)'],
+    steps: ['Draft a clear, specific application addressed to the PIO.', 'Submit it online or in person with the fee and keep proof.', 'If there is no reply in the statutory time, file a first appeal.'],
+    templateHint: 'RTI application' },
+];
+
+export const seedTemplates = [
+  { id: 'tpl-1', name: 'Legal notice for consumer complaint', category: 'Consumer', description: 'Pre-litigation notice to a seller or service provider for a defective product or deficient service.', version: '1.0', status: 'active',
+    content: 'To,\n[Seller / Service Provider Name]\n[Address]\n\nDate: [DD/MM/YYYY]\n\nSubject: Legal notice regarding [product / service]\n\n1. I purchased [product/service] on [date] for Rs. [amount] (Invoice No. [..]).\n2. The following defect / deficiency has occurred: [describe].\n3. Despite my complaint dated [date], no remedy has been provided.\n\nYou are requested to [replace / refund / compensate] within [15] days of receiving this notice, failing which I will approach the appropriate Consumer Disputes Redressal Commission.\n\nYours faithfully,\n[Name]\n[Contact details]\n' },
+  { id: 'tpl-2', name: 'Rental agreement', category: 'Tenancy & Property', description: 'Basic residential leave-and-license / rent agreement outline.', version: '1.2', status: 'active',
+    content: 'RENT AGREEMENT\n\nThis agreement is made on [date] between [Landlord] and [Tenant].\n\n1. Premises: [address]\n2. Term: [start date] to [end date]\n3. Monthly rent: Rs. [amount], payable by [day] of each month\n4. Security deposit: Rs. [amount], refundable on vacating after lawful deductions\n5. Notice period: [..] days by either party\n6. Maintenance and utilities: [..]\n\nSigned:\n[Landlord]            [Tenant]\nWitnesses: 1. [..]  2. [..]\n' },
+  { id: 'tpl-3', name: 'Unpaid wages demand letter', category: 'Employment', description: 'Written demand to an employer for pending salary or dues.', version: '1.0', status: 'active',
+    content: 'To,\nThe HR Manager, [Company]\n\nDate: [DD/MM/YYYY]\n\nSubject: Request for payment of pending dues\n\nI worked as [designation] from [date] to [date]. The following dues remain unpaid: [salary months / amounts].\n\nKindly clear these dues within [10] days, failing which I will approach the competent labour authority.\n\nSincerely,\n[Name], [Employee ID]\n' },
+  { id: 'tpl-4', name: 'RTI application', category: 'RTI', description: 'Application to a Public Information Officer under the Right to Information Act.', version: '1.0', status: 'active',
+    content: 'To,\nThe Public Information Officer\n[Public Authority, Address]\n\nSubject: Application under the Right to Information Act, 2005\n\nPlease provide the following information:\n1. [..]\n2. [..]\n\nI am enclosing the application fee of Rs. [amount] by [mode].\n\nName: [..]\nAddress: [..]\nDate: [..]\n' },
+  { id: 'tpl-5', name: 'Cyber crime complaint', category: 'Cyber', description: 'Draft complaint for online fraud or harassment to accompany a police / portal report.', version: '1.0', status: 'active',
+    content: 'To,\nThe Station House Officer / Cyber Crime Cell, [City]\n\nSubject: Complaint regarding online [fraud / harassment]\n\nOn [date] at [time], [describe what happened, platform, amount, transaction ID, URLs].\n\nI request that you register the complaint and take appropriate action. Evidence is attached.\n\nName: [..]  Phone: [..]  Email: [..]\n' },
+];
+
+export const seedUsers = [
+  { id: 'u-admin', name: 'Admin', email: 'admin@spectre.dev', password: 'admin123', role: 'admin', createdAt: '2026-09-06T09:00:00Z', active: true },
+  { id: 'u-demo', name: 'Demo User', email: 'demo@spectre.dev', password: 'demo1234', role: 'user', createdAt: '2026-09-07T09:00:00Z', active: true },
+];
