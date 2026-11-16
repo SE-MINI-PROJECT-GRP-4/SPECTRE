@@ -7,6 +7,7 @@ import Register from './pages/Register.jsx';
 import Chat from './pages/Chat.jsx';
 import Templates from './pages/Templates.jsx';
 import History from './pages/History.jsx';
+import Admin from './pages/Admin.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/chat/:id" element={<Chat />} />
           <Route path="/templates" element={<Templates />} />
           <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
