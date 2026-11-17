@@ -2,7 +2,7 @@
 
 import os
 from typing import List
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -47,9 +47,7 @@ class Settings(BaseSettings):
         "of outcome. Consult a licensed advocate for case-specific advice."
     )
 
-    class Config:
-        case_sensitive = True
-        env_file = ".env"
+    model_config = SettingsConfigDict(case_sensitive=True, env_file=".env", extra="ignore")
 
 
 settings = Settings()

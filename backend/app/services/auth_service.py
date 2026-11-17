@@ -6,7 +6,7 @@ from app.core.config import settings
 from app.core.security import create_access_token, hash_password, verify_password
 from app.models.user import User, UserRole
 from app.repositories.users import UserRepository
-from app.schemas.auth import Token, UserCreate, UserLogin, UserResponse
+from app.schemas.auth import RegisterResponse, Token, UserCreate, UserLogin, UserResponse
 
 
 class AuthService:
@@ -16,7 +16,7 @@ class AuthService:
         self.db = db
         self.repo = UserRepository(db)
 
-    def register(self, data: UserCreate) -> UserResponse:
+    def register(self, data: UserCreate) -> RegisterResponse:
         """Register a new user account (REQ-AUTH-01, REQ-AUTH-02, REQ-AUTH-03)."""
         existing = self.repo.get_by_email(data.email)
         if existing:
@@ -33,7 +33,20 @@ class AuthService:
             full_name=data.full_name,
             role=role,
         )
-        return UserResponse.model_validate(user)
+        token = create_access_token(subject=user.id, role=user.role.value)
+        user_dto = UserResponse.model_validate(user)
+        return RegisterResponse(
+            id=user.id,
+            email=user.email,
+            full_name=user.full_name,
+            role=user.role,
+            is_active=user.is_active,
+            created_at=user.created_at,
+            token=token,
+            access_token=token,
+            token_type="bearer",
+            user=user_dto,
+        )
 
     def login(self, data: UserLogin) -> Token:
         """Authenticate user credentials and issue signed JWT token (REQ-AUTH-04, REQ-AUTH-05)."""

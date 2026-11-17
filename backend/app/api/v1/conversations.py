@@ -1,21 +1,40 @@
 """Conversation and Query Orchestration API v1 Endpoints."""
 
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 from app.database.session import get_db
-from app.dependencies.auth import get_current_user
+from app.dependencies.auth import get_current_user, get_optional_user
 from app.models.user import User
 from app.schemas.conversation import (
     ConversationCreate,
     ConversationDetailResponse,
     ConversationResponse,
+    FrontendQueryRequest,
+    FrontendQueryResponse,
     QuerySubmitRequest,
 )
 from app.schemas.query import QueryResultDTO
 from app.services.conversation_service import ConversationService
 
-router = APIRouter(prefix="/conversations", tags=["Conversations & Legal Queries"])
+router = APIRouter(prefix="/conversations", tags=["Conversations"])
+query_router = APIRouter(tags=["Legal Queries"])
+
+
+@query_router.post(
+    "/query",
+    response_model=FrontendQueryResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Submit query to legal AI assistant (Frontend Unified API)",
+    description="Processes legal query, integrates AI engine and safety validation, returning structured response according to SRS §3.1.",
+)
+def submit_frontend_query(
+    payload: FrontendQueryRequest,
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_user),
+) -> FrontendQueryResponse:
+    service = ConversationService(db)
+    return service.process_frontend_query(payload=payload, current_user=current_user)
 
 
 @router.post(

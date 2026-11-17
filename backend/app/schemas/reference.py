@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 
 class ReferenceBase(BaseModel):
@@ -47,8 +47,24 @@ class ReferenceResponse(ReferenceBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    @computed_field
+    @property
+    def domain(self) -> str:
+        return self.legal_domain
+
+    @computed_field
+    @property
+    def link(self) -> str:
+        return self.url or ""
+
+    @computed_field
+    @property
+    def date(self) -> str:
+        if self.year:
+            return f"{self.year}-01-01"
+        return self.created_at.strftime("%Y-%m-%d") if self.created_at else ""
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ReferenceListResponse(BaseModel):

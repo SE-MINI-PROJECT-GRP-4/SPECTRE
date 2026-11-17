@@ -7,6 +7,7 @@ from app.models.message import Message
 from app.models.reference import LegalReference
 from app.models.template import DocumentTemplate
 from app.models.audit_log import AuditLog
+from app.models.knowledge import KnowledgeEntry
 
 __all__ = [
     "TimestampMixin",
@@ -17,4 +18,5 @@ __all__ = [
     "LegalReference",
     "DocumentTemplate",
     "AuditLog",
+    "KnowledgeEntry",
 ]

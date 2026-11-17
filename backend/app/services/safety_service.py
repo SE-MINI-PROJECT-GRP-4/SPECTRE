@@ -16,8 +16,9 @@ from app.core.config import settings
 # Patterns suggesting dangerous requests or illegal assistance (refusal triggers)
 REFUSAL_PATTERNS = [
     r"\bhow to kill\b", r"\bhow to murder\b", r"\bhow to hide a body\b",
-    r"\bhow to evade arrest\b", r"\bhow to destroy evidence\b", r"\bbribe a judge\b",
-    r"\bbribe the police\b", r"\bmanufacture drugs\b", r"\bhack a government\b"
+    r"\bhow to evade arrest\b", r"\bevade (the )?police\b", r"\bhow to destroy evidence\b",
+    r"\bbribe a judge\b", r"\bbribe the police\b", r"\bmanufacture drugs\b",
+    r"\bhack a government\b", r"\bhack\b",
 ]
 
 # Patterns representing false outcome guarantees that must be stripped or flagged

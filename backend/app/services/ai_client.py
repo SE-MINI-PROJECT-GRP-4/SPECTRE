@@ -77,6 +77,54 @@ FALLBACK_KNOWLEDGE_BASE = {
         ],
         "helplines": ["RTI Online Support: 011-24622690", "Portal: rtionline.gov.in"]
     },
+    LegalDomainEnum.CIVIL: {
+        "act": "Transfer of Property Act, 1882 / Model Tenancy Act, 2021",
+        "citation": "Act No. 4 of 1882",
+        "section": "Section 105 & 108",
+        "quote": "A lease of immovable property is a transfer of a right to enjoy such property, made for a certain time or in perpetuity.",
+        "answer": (
+            "Under the Transfer of Property Act, 1882 and applicable state tenancy laws [S1], security deposits are refundable "
+            "upon vacant possession, subject only to lawful deductions agreed in the rent agreement. Landlords cannot unlawfully withhold deposits."
+        ),
+        "steps": [
+            "Review the rent agreement notice period and security deposit refund clauses.",
+            "Issue a formal written demand notice to the landlord demanding the refund within 15 days.",
+            "If the dispute is not settled, approach the local Rent Authority / Rent Tribunal or the Civil Court for recovery."
+        ],
+        "helplines": ["Legal Services Authority: 15100"]
+    },
+    LegalDomainEnum.LABOR: {
+        "act": "Payment of Wages Act, 1936 / Industrial Disputes Act, 1947",
+        "citation": "Act No. 4 of 1936",
+        "section": "Section 15",
+        "quote": "Where contrary to the provisions of this Act any deduction has been made from wages or any payment of wages has been delayed, an application may be made.",
+        "answer": (
+            "Under the Payment of Wages Act, 1936 [S1], every employee is legally entitled to timely disbursement of wages. "
+            "Unlawful withholding of salary or wrongful termination entitles the employee to claim pending dues with statutory compensation."
+        ),
+        "steps": [
+            "Send a written representation / demand notice to the HR department or employer specifying pending salary months.",
+            "If unresolved within 10 days, file a complaint before the Deputy Labour Commissioner (DLC) / Labour Officer.",
+            "Initiate conciliation proceedings or approach the Labour Court for recovery certificate."
+        ],
+        "helplines": ["Ministry of Labour & Employment Grievance Portal (SAMADHAN)"]
+    },
+    LegalDomainEnum.FAMILY: {
+        "act": "Hindu Marriage Act, 1955 / Special Marriage Act, 1954",
+        "citation": "Act No. 25 of 1955",
+        "section": "Section 13 & 24",
+        "quote": "Any marriage solemnized may, on a petition presented by either the husband or the wife, be dissolved by a decree of divorce.",
+        "answer": (
+            "Under the Hindu Marriage Act, 1955 and Special Marriage Act, 1954 [S1], family disputes involving divorce, "
+            "maintenance, and child custody are governed by statutory procedures requiring petitions before the competent Family Court."
+        ),
+        "steps": [
+            "Consult with a licensed family lawyer to evaluate appropriate legal grounds or mutual consent options.",
+            "Engage in pre-litigation mediation or counselling as mandated by Family Courts.",
+            "File petition before the competent Family Court having territorial jurisdiction."
+        ],
+        "helplines": ["National Commission for Women (NCW) Helpline: 7827170170", "Women in Distress: 1091"]
+    },
 }
 
 
@@ -108,33 +156,40 @@ class AIServiceClient:
         if self._engine_instance is not None:
             try:
                 raw_response = self._engine_instance.ask({"question": question, "top_k": top_k})
-                domain, _ = LegalDomainClassifier.classify(question)
+                status_val = getattr(raw_response, "status", "")
+                if hasattr(status_val, "value"):
+                    status_val = status_val.value
 
-                citations = [
-                    CitationSchema(
-                        source_id=c.source_id,
-                        document=c.document,
-                        section=c.section,
-                        quote=c.quote,
-                        verified=c.verified,
-                        page_start=c.page_start,
-                        page_end=c.page_end,
+                if status_val == "answered":
+                    domain, _ = LegalDomainClassifier.classify(question)
+
+                    citations = [
+                        CitationSchema(
+                            source_id=c.source_id,
+                            document=c.document,
+                            section=c.section,
+                            quote=c.quote,
+                            verified=c.verified,
+                            page_start=c.page_start,
+                            page_end=c.page_end,
+                        )
+                        for c in getattr(raw_response, "citations", [])
+                    ]
+
+                    return QueryResultDTO(
+                        status="answered",
+                        legal_domain=domain,
+                        answer=getattr(raw_response, "answer", ""),
+                        procedural_steps=[],
+                        citations=citations,
+                        confidence=getattr(raw_response, "confidence", 0.85),
+                        confidence_label=getattr(raw_response, "confidence_label", "high"),
+                        disclaimer=getattr(raw_response, "disclaimer", settings.STANDARD_DISCLAIMER),
+                        warnings=getattr(raw_response, "warnings", []),
+                        helplines=getattr(raw_response, "helplines", []),
                     )
-                    for c in getattr(raw_response, "citations", [])
-                ]
-
-                return QueryResultDTO(
-                    status=getattr(raw_response, "status", "answered"),
-                    legal_domain=domain,
-                    answer=getattr(raw_response, "answer", ""),
-                    procedural_steps=[],
-                    citations=citations,
-                    confidence=getattr(raw_response, "confidence", 0.85),
-                    confidence_label=getattr(raw_response, "confidence_label", "high"),
-                    disclaimer=getattr(raw_response, "disclaimer", settings.STANDARD_DISCLAIMER),
-                    warnings=getattr(raw_response, "warnings", []),
-                    helplines=getattr(raw_response, "helplines", []),
-                )
+                else:
+                    logger.info(f"Primary AI engine status is '{status_val}', engaging resilient fallback.")
             except Exception as e:
                 logger.warning(f"Primary AI engine execution encountered issue, using resilient fallback: {e}")
 

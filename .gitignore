@@ -48,3 +48,14 @@ yarn.lock
 # Logs
 logs/
 *.log
+
+# Databases & local state
+spectre.db
+*.sqlite3-journal
+
+# Unrelated local desktop files
+50_traffic-escape-main.zip
+50_traffic-escape-main/
+LLM CHAT DETAILS.pdf
+
+

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.models.user import User, UserRole
 from app.models.reference import LegalReference
 from app.models.template import DocumentTemplate
+from app.models.knowledge import KnowledgeEntry
 
 
 def hash_password(password: str) -> str:
@@ -34,6 +35,20 @@ INITIAL_USERS = [
         "full_name": "Rahul Sharma",
         "role": UserRole.USER,
         "password": "User@SPECTRE2026!",
+        "is_active": True,
+    },
+    {
+        "email": "admin@spectre.dev",
+        "full_name": "Admin Dev",
+        "role": UserRole.ADMIN,
+        "password": "admin123",
+        "is_active": True,
+    },
+    {
+        "email": "demo@spectre.dev",
+        "full_name": "Demo User",
+        "role": UserRole.USER,
+        "password": "demo1234",
         "is_active": True,
     },
 ]
@@ -116,6 +131,50 @@ INITIAL_REFERENCES = [
         "url": "https://rtionline.gov.in",
         "status": "active",
         "summary": "Mandates timely response to citizen requests for government information, upholding democratic transparency and freedom of speech under Article 19(1)(a).",
+    },
+    {
+        "title": "Transfer of Property Act, 1882",
+        "citation": "Act No. 4 of 1882",
+        "source": "India Code",
+        "legal_domain": "Tenancy & Property",
+        "year": 1882,
+        "court": "Supreme Court and High Courts of India",
+        "url": "https://www.indiacode.nic.in",
+        "status": "active",
+        "summary": "Governs the transfer of immovable property by act of parties, including leases, mortgages, and landlord-tenant rights.",
+    },
+    {
+        "title": "Model Tenancy Act, 2021",
+        "citation": "MoHUA Model Legislation 2021",
+        "source": "Ministry of Housing and Urban Affairs",
+        "legal_domain": "Tenancy & Property",
+        "year": 2021,
+        "court": "Rent Authorities and Tribunals",
+        "url": "https://mohua.gov.in",
+        "status": "active",
+        "summary": "Framework for tenancy agreements, security deposit caps, eviction procedures, and establishment of Rent Courts.",
+    },
+    {
+        "title": "Industrial Disputes Act, 1947",
+        "citation": "Act No. 14 of 1947",
+        "source": "India Code",
+        "legal_domain": "Employment",
+        "year": 1947,
+        "court": "Labour Courts / Industrial Tribunals",
+        "url": "https://www.indiacode.nic.in",
+        "status": "active",
+        "summary": "Provides for investigation and settlement of industrial disputes, unfair labor practices, and compensation for layoff/retrenchment.",
+    },
+    {
+        "title": "Hindu Marriage Act, 1955",
+        "citation": "Act No. 25 of 1955",
+        "source": "India Code",
+        "legal_domain": "Family",
+        "year": 1955,
+        "court": "Family Courts / High Courts",
+        "url": "https://www.indiacode.nic.in",
+        "status": "active",
+        "summary": "Codifies the law relating to marriage, restitution of conjugal rights, judicial separation, divorce, and maintenance.",
     },
 ]
 
@@ -263,11 +322,200 @@ Name: {{complainant_name}}
 Contact: {{complainant_contact}}
 """,
     },
+    {
+        "name": "Rental agreement",
+        "slug": "rental-agreement",
+        "category": "Tenancy & Property",
+        "description": "Basic residential leave-and-license / rent agreement outline.",
+        "version": "1.2",
+        "variables_json": json.dumps([
+            {"key": "landlord_name", "label": "Landlord Name", "type": "string", "required": True},
+            {"key": "tenant_name", "label": "Tenant Name", "type": "string", "required": True},
+            {"key": "premises_address", "label": "Premises Address", "type": "string", "required": True},
+            {"key": "rent_amount", "label": "Monthly Rent (INR)", "type": "string", "required": True},
+            {"key": "security_deposit", "label": "Security Deposit (INR)", "type": "string", "required": True},
+        ]),
+        "content": """RENT AGREEMENT
+
+This agreement is made between {{landlord_name}} (Landlord) and {{tenant_name}} (Tenant).
+
+1. Premises: {{premises_address}}
+2. Monthly rent: Rs. {{rent_amount}}, payable by 5th of each month.
+3. Security deposit: Rs. {{security_deposit}}, refundable on vacating after lawful deductions.
+4. Notice period: 30 days by either party.
+
+Signed:
+{{landlord_name}} (Landlord)            {{tenant_name}} (Tenant)
+""",
+    },
+    {
+        "name": "Unpaid wages demand letter",
+        "slug": "unpaid-wages-demand-letter",
+        "category": "Employment",
+        "description": "Written demand to an employer for pending salary or dues under labor laws.",
+        "version": "1.0",
+        "variables_json": json.dumps([
+            {"key": "company_name", "label": "Company / Employer Name", "type": "string", "required": True},
+            {"key": "employee_name", "label": "Employee Name", "type": "string", "required": True},
+            {"key": "designation", "label": "Designation", "type": "string", "required": True},
+            {"key": "pending_amount", "label": "Pending Dues Amount (INR)", "type": "string", "required": True},
+        ]),
+        "content": """To,
+The HR Manager / Management,
+{{company_name}}
+
+Subject: Request and formal demand for payment of pending salary dues
+
+Sir / Madam,
+
+I worked as {{designation}} at {{company_name}}. The following salary dues amounting to Rs. {{pending_amount}} remain unpaid.
+
+Kindly disburse these dues within 10 days of receipt of this notice, failing which I will approach the competent Labour Commissioner under the Payment of Wages Act.
+
+Sincerely,
+{{employee_name}}
+""",
+    },
+    {
+        "name": "Cyber crime complaint",
+        "slug": "cyber-crime-complaint",
+        "category": "Cyber",
+        "description": "Draft complaint for online financial fraud or harassment to accompany a police / 1930 portal report.",
+        "version": "1.0",
+        "variables_json": json.dumps([
+            {"key": "victim_name", "label": "Complainant Name", "type": "string", "required": True},
+            {"key": "transaction_id", "label": "Transaction ID / UTR", "type": "string", "required": True},
+            {"key": "fraud_amount", "label": "Defrauded Amount (INR)", "type": "string", "required": True},
+            {"key": "platform_used", "label": "Platform / Website / App", "type": "string", "required": True},
+        ]),
+        "content": """To,
+The Station House Officer / Cyber Crime Cell,
+
+Subject: Formal complaint regarding online financial fraud / cyber offence
+
+I, {{victim_name}}, wish to report an incident of financial cyber fraud on {{platform_used}} involving fraudulent transaction reference {{transaction_id}} for an amount of Rs. {{fraud_amount}}.
+
+I request urgent action to trace the fraudulent account and freeze proceeds under Section 66D of the IT Act, 2000.
+
+Name: {{victim_name}}
+Date: [DD/MM/YYYY]
+""",
+    },
+]
+
+
+INITIAL_KNOWLEDGE = [
+    {
+        "id": "kb-1",
+        "domain": "Consumer",
+        "title": "Defective product or deficient service",
+        "explanation": "If a product is defective or a service is deficient, you can seek a repair, replacement, refund or compensation from the seller or service provider, and approach a Consumer Disputes Redressal Commission if they do not resolve it.",
+        "keywords": ["refund", "defective", "consumer", "warranty", "product", "seller", "service", "e-commerce"],
+        "prerequisites": ["Invoice / proof of purchase", "Photos or evidence of the defect", "Written communication with the seller"],
+        "steps": [
+            "Complain to the seller or service provider in writing and keep a copy.",
+            "Send a legal notice if there is no response within a reasonable time.",
+            "File a complaint with the appropriate District Consumer Disputes Redressal Commission (online filing is available through e-Daakhil).",
+            "Attend hearings or mediation as scheduled."
+        ],
+        "ref_ids": ["ref-1"],
+        "template_hint": "Legal notice for consumer complaint"
+    },
+    {
+        "id": "kb-2",
+        "domain": "Tenancy & Property",
+        "title": "Security deposit and eviction disputes",
+        "explanation": "Rights and duties between landlord and tenant depend mainly on your rent agreement and the rent-control or tenancy law of your state. Deposits are normally refundable after lawful deductions once possession is handed back.",
+        "keywords": ["rent", "landlord", "tenant", "deposit", "evict", "lease", "tenancy", "property"],
+        "prerequisites": ["Signed rent / leave-and-license agreement", "Rent payment records", "Notice or messages exchanged with the landlord"],
+        "steps": [
+            "Read the notice period and deposit clauses in your agreement.",
+            "Send a written demand or notice to the landlord stating your claim.",
+            "Try mediation or a rent authority / civil court in your state if the dispute continues."
+        ],
+        "ref_ids": ["ref-2", "ref-3"],
+        "template_hint": "Rental agreement"
+    },
+    {
+        "id": "kb-3",
+        "domain": "Employment",
+        "title": "Unpaid wages and wrongful termination",
+        "explanation": "Employees can raise unpaid wages or an unfair termination first with the employer, and then with the labour authorities of their state. The applicable law depends on your role, sector and state.",
+        "keywords": ["salary", "wages", "employer", "terminated", "fired", "job", "employee", "notice period", "unpaid"],
+        "prerequisites": ["Appointment letter / contract", "Salary slips and bank statements", "Termination letter or emails, if any"],
+        "steps": [
+            "Send a written representation to HR or the employer asking for dues.",
+            "If unresolved, approach the Labour Commissioner or labour office with your documents.",
+            "Seek advice from a labour lawyer for conciliation or tribunal options."
+        ],
+        "ref_ids": ["ref-4"],
+        "template_hint": "Unpaid wages demand letter"
+    },
+    {
+        "id": "kb-4",
+        "domain": "Cyber",
+        "title": "Online fraud and cyber harassment",
+        "explanation": "Online financial fraud and cyber harassment can be reported quickly through the national cybercrime channels. Speed matters, especially for money transfers.",
+        "keywords": ["cyber", "online", "fraud", "scam", "hacked", "upi", "phishing", "harassment", "instagram", "otp"],
+        "prerequisites": ["Screenshots, transaction IDs and URLs", "Bank / platform communication", "Your ID and contact details"],
+        "steps": [
+            "Inform your bank immediately so the transaction can be flagged.",
+            "Report on the national cybercrime portal (cybercrime.gov.in) or call 1930 for financial fraud.",
+            "File a complaint at the local police / cyber cell with your evidence."
+        ],
+        "ref_ids": ["ref-5"],
+        "template_hint": "Cyber crime complaint"
+    },
+    {
+        "id": "kb-5",
+        "domain": "Criminal",
+        "title": "Filing an FIR",
+        "explanation": "A cognizable offence can be reported by lodging an FIR at a police station. If the police refuse, there are escalation routes available.",
+        "keywords": ["fir", "police", "theft", "crime", "complaint", "assault", "arrest", "criminal"],
+        "prerequisites": ["Details of the incident (date, place, persons involved)", "Any evidence or witness details", "Your identification"],
+        "steps": [
+            "Go to the police station with jurisdiction (or lodge a Zero FIR at any station).",
+            "Give a clear written or oral statement and ask for a free copy of the FIR.",
+            "If refused, escalate in writing to the senior police officer or approach the Magistrate."
+        ],
+        "ref_ids": ["ref-6"],
+        "template_hint": None
+    },
+    {
+        "id": "kb-6",
+        "domain": "Family",
+        "title": "Marriage, divorce and maintenance",
+        "explanation": "Family matters depend heavily on personal law, the facts of your case and the court. This is an area where individual legal advice is strongly recommended.",
+        "keywords": ["divorce", "marriage", "maintenance", "custody", "spouse", "alimony", "family"],
+        "prerequisites": ["Marriage certificate", "Identity and address proof", "Details of children, income and assets"],
+        "steps": [
+            "Consult a family lawyer about the correct ground and forum.",
+            "Consider mediation or counselling where suitable.",
+            "File the petition in the competent Family Court."
+        ],
+        "ref_ids": ["ref-7"],
+        "template_hint": None
+    },
+    {
+        "id": "kb-7",
+        "domain": "RTI",
+        "title": "Filing an RTI application",
+        "explanation": "Any citizen can request information held by a public authority by writing to its Public Information Officer.",
+        "keywords": ["rti", "right to information", "government information", "public authority"],
+        "prerequisites": ["Name of the public authority", "Specific information requested", "Application fee (as applicable)"],
+        "steps": [
+            "Draft a clear, specific application addressed to the PIO.",
+            "Submit it online or in person with the fee and keep proof.",
+            "If there is no reply in the statutory time, file a first appeal."
+        ],
+        "ref_ids": ["ref-8"],
+        "template_hint": "RTI application"
+    },
 ]
 
 
 def seed_database(db: Session) -> None:
-    """Populate database with initial users, references, and document templates."""
+    """Populate database with initial users, references, templates, and knowledge."""
     # Seed Users
     for user_data in INITIAL_USERS:
         existing = db.query(User).filter(User.email == user_data["email"]).first()
@@ -295,5 +543,22 @@ def seed_database(db: Session) -> None:
         if not existing_tpl:
             tpl = DocumentTemplate(**tpl_data)
             db.add(tpl)
+
+    # Seed Knowledge
+    for kb in INITIAL_KNOWLEDGE:
+        existing_kb = db.query(KnowledgeEntry).filter(KnowledgeEntry.id == kb["id"]).first()
+        if not existing_kb:
+            entry = KnowledgeEntry(
+                id=kb["id"],
+                domain=kb["domain"],
+                title=kb["title"],
+                explanation=kb["explanation"],
+                keywords_json=json.dumps(kb["keywords"]),
+                prerequisites_json=json.dumps(kb["prerequisites"]),
+                steps_json=json.dumps(kb["steps"]),
+                ref_ids_json=json.dumps(kb["ref_ids"]),
+                template_hint=kb["template_hint"],
+            )
+            db.add(entry)
 
     db.commit()

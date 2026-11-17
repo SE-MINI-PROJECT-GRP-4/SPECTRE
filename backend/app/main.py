@@ -1,10 +1,12 @@
 """SPECTRE Legal Assistant — FastAPI Core Backend Orchestrator."""
 
+import os
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.database.session import Base, engine, SessionLocal
@@ -12,7 +14,7 @@ from app.database.seed_data import seed_database
 
 # Import API Routers
 from app.api.v1.auth import router as auth_router
-from app.api.v1.conversations import router as conversations_router
+from app.api.v1.conversations import router as conversations_router, query_router
 from app.api.v1.references import router as references_router
 from app.api.v1.procedures import router as procedures_router
 from app.api.v1.templates import router as templates_router
@@ -87,6 +89,7 @@ def root():
         "status": "running",
         "documentation": "/docs",
         "api_v1": settings.API_V1_STR,
+        "ui": "/ui" if os.path.isdir(frontend_dist) else "Run 'npm run dev' inside frontend/",
     }
 
 
@@ -95,11 +98,32 @@ def health():
     return {"status": "ok", "app": settings.PROJECT_NAME}
 
 
-# Mount API v1 Routers
+# Mount API v1 Routers (SRS v1.0 specification)
 app.include_router(auth_router, prefix=settings.API_V1_STR)
 app.include_router(conversations_router, prefix=settings.API_V1_STR)
+app.include_router(query_router, prefix=settings.API_V1_STR)
 app.include_router(references_router, prefix=settings.API_V1_STR)
 app.include_router(procedures_router, prefix=settings.API_V1_STR)
 app.include_router(templates_router, prefix=settings.API_V1_STR)
 app.include_router(admin_router, prefix=settings.API_V1_STR)
 app.include_router(system_router, prefix=settings.API_V1_STR)
+
+# Also mount under /api for frontend HTTP client compatibility
+app.include_router(auth_router, prefix="/api")
+app.include_router(conversations_router, prefix="/api")
+app.include_router(query_router, prefix="/api")
+app.include_router(references_router, prefix="/api")
+app.include_router(procedures_router, prefix="/api")
+app.include_router(templates_router, prefix="/api")
+app.include_router(admin_router, prefix="/api")
+app.include_router(system_router, prefix="/api")
+
+# Mount query_router at root /query for direct endpoint access
+app.include_router(query_router)
+
+# Mount frontend production build if available
+frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist"))
+if os.path.isdir(frontend_dist):
+    app.mount("/ui", StaticFiles(directory=frontend_dist, html=True), name="frontend_ui")
+
+
