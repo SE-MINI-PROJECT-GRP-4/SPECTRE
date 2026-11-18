@@ -23,10 +23,10 @@ The system is designed with strict separation of concerns across 4 specialized r
 
 | Member | Project Role | Responsibilities & Ownership |
 |---|---|---|
-| **Member 1** | **Team Lead / Integration Owner** | Overall system integration, cross-module contracts, routing harmonization, static packaging, end-to-end verification, and release. |
-| **Member 2** | **Backend Developer** | FastAPI orchestrator, SQLAlchemy ORM, SQLite/PostgreSQL database, JWT authentication, user and conversation repositories. |
-| **Member 3** | **AI/ML Developer** | Query classification, ChromaDB vector store, RAG retrieval pipeline, citation verification, safety moderation, and `SpectreService`. |
-| **Member 4** | **Frontend Developer** | React 18 single-page application, Vite build system, Chat UI, Document Template preview/download, Admin dashboard, and HTTP/Mock API clients. |
+| **Rishabh** | **Project Integration** | Overall system integration, cross-module contracts, routing harmonization, static packaging, end-to-end verification, and release. |
+| **Dushyanth and Rishabh** | **Backend Developer** | FastAPI orchestrator, SQLAlchemy ORM, SQLite/PostgreSQL database, JWT authentication, user and conversation repositories. |
+| **Shonit** | **AI/ML Developer** | Query classification, ChromaDB vector store, RAG retrieval pipeline, citation verification, safety moderation, and `SpectreService`. |
+| **Shashwat** | **Frontend Developer** | React 18 single-page application, Vite build system, Chat UI, Document Template preview/download, Admin dashboard, and HTTP/Mock API clients. |
 
 ---
 
